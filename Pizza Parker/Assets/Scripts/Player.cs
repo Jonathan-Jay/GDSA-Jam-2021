@@ -33,6 +33,13 @@ public class Player : MonoBehaviour
 
 
 		playerID = players++;
+		//player 1 is normal, player 2 is blue
+		if (playerID == 1) {
+			GetComponentInChildren<SpriteRenderer>().color = Color.white;
+		}
+		else {
+			GetComponentInChildren<SpriteRenderer>().color = Color.blue;
+		}
 		stunned = 0f;
 
 		//get the paddle collider
