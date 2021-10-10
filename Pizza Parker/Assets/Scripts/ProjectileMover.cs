@@ -44,7 +44,8 @@ public class ProjectileMover : MonoBehaviour
     {
         // TODO JJ: Add player collision < this is player death
 
-        // TODO Michael: Add car collision 
+        // TODO Michael: Add car collision
+		
 
         #region Ricochet
         //ricochet
@@ -94,7 +95,7 @@ public class ProjectileMover : MonoBehaviour
 			Vector3 pos;
 			if (collider.gameObject.GetComponent<Player>().IsAttacking()) {
 				//hit direction code
-				transform.rotation = Quaternion.AngleAxis(180f, Vector3.up) * collider.transform.rotation;
+				transform.rotation = collider.transform.rotation;
 
 				//sparks, same code as before, but adapted for this type of hit
 				rot = transform.rotation;
@@ -102,7 +103,7 @@ public class ProjectileMover : MonoBehaviour
 			}
 			else {
 				//bounce on back code
-				Vector3 ricochetDir = Vector3.Reflect(transform.forward, collider.transform.forward);
+				Vector3 ricochetDir = Vector3.Reflect(transform.forward, Quaternion.AngleAxis(180f, Vector3.up) * collider.transform.forward);
 				float newRot = 90 - Mathf.Atan2(ricochetDir.z, ricochetDir.x) * Mathf.Rad2Deg;
 				transform.rotation = Quaternion.AngleAxis(newRot, Vector3.up);
 
@@ -124,6 +125,7 @@ public class ProjectileMover : MonoBehaviour
 				var hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
 				Destroy(hitInstance, 1);
 			}
+			#endregion
 		}
 		foreach (var detachedPrefab in Detached)
 		{
@@ -132,6 +134,5 @@ public class ProjectileMover : MonoBehaviour
 				detachedPrefab.transform.parent = null;
 			}
 		}
-		#endregion
 	}
 }

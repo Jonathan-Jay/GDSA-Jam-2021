@@ -5,9 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-
 	public Transform tempShape;
-	private bool isAttacking = false;
+	bool attacked = false;
 
 	BoxCollider paddle;
 	public Vector3 backPos = new Vector3(0f, 0f, 0.6f);
@@ -15,12 +14,11 @@ public class Player : MonoBehaviour
 	public Vector3 hitPos = new Vector3(0f, 0f, -1.2f);
 	public Vector3 hitShape = new Vector3(1.2f, 1.2f, 1.2f);
 	Rigidbody rb;
+	Animator anim;
+
 
 	public float speed = 5f;
 	public float stunned;
-
-	public Drunk drunkScript;
-	public bool drunkMode = false;
 
 	private int playerID;
 	private static int players = 1;
@@ -31,6 +29,7 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 		rb.useGravity = false;
+		anim = GetComponentInChildren<Animator>();
 
 
 		playerID = players++;
@@ -47,10 +46,6 @@ public class Player : MonoBehaviour
 		paddle.center = backPos;
 		paddle.size = backShape;
 
-		drunkScript = Camera.main.gameObject.GetComponent<Drunk>();
-
-
-
 		tempShape.localPosition = backPos;
 		tempShape.localScale = backShape;
     }
@@ -64,66 +59,61 @@ public class Player : MonoBehaviour
 			Input.GetAxisRaw("Vertical " + playerID)
 		);
 
-		//don't move if too slow, this fixes sliding
-		if (direction.magnitude > 0.25f) {
-			//set rotation and movement
-			rb.rotation = Quaternion.Euler(90f, 0f,
-				270f + Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg);
+		if (anim.GetInteger("State") != 2) {
+			//don't move if too slow, this fixes sliding
+			if (direction.magnitude > 0.25f) {
+				anim.SetInteger("State", 1);
 
-			//don't move if stunned, but allow rotation i guess
-			if (stunned > 0) {
-				stunned -= Time.deltaTime;
+				//set rotation and movement
+				rb.rotation = Quaternion.AngleAxis(90f - Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg,
+					Vector3.up);
+
+				//don't move if stunned, but allow rotation i guess
+				if (stunned > 0) {
+					stunned -= Time.deltaTime;
+				}	//dont move if attacking
+				else {
+					//normalize stuff
+					if (Mathf.Abs(direction.x) > 0.5f && Mathf.Abs(direction.z) > 0.5f) {
+						direction *= root2;
+					}
+					rb.velocity = direction * speed;
+				}
 			}
 			else {
-				//normalize stuff
-				if (Mathf.Abs(direction.x) > 0.5f && Mathf.Abs(direction.z) > 0.5f) {
-					direction *= root2;
-				}
-				rb.velocity = direction * speed;
+				anim.SetInteger("State", 0);
+				rb.velocity = Vector3.zero;
 			}
 		}
-		else {
-			rb.velocity = Vector3.zero;
-		}
 
-		//TODO Haider: change to ButtonDown and check for animation
 		if (stunned <= 0) {
 			//Swing
-			if (Input.GetButton("Swing " + playerID)) {
-				isAttacking = true;
+			if (Input.GetButtonDown("Swing " + playerID)) {
 				//stop
-				rb.velocity = Vector3.zero;
+				if (!attacked) {
+					anim.SetInteger("State", 2);
+					attacked = true;
+					rb.velocity = Vector3.zero;
 
-				tempShape.localPosition = hitPos;
-				tempShape.localScale = hitShape;
-				paddle.center = hitPos;
-				paddle.size = hitShape;
+					tempShape.localPosition = hitPos;
+					tempShape.localScale = hitShape;
+					paddle.center = hitPos;
+					paddle.size = hitShape;
+				}
 			}
-			else {
-				isAttacking = false;
+			else if (attacked && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1) {
+				anim.SetInteger("State", 0);
+				attacked = false;
+
 				tempShape.localPosition = backPos;
 				tempShape.localScale = backShape;
 				paddle.center = backPos;
 				paddle.size = backShape;
 			}
 		}
-
-		if (Input.GetButtonDown("Cancel")) 
-		{
-			if (drunkMode)
-			{
-				drunkMode = false;
-			}
-			else 
-			{
-				drunkMode = true;
-			}
-			drunkScript.enabled = drunkMode;
-		}
 	}
 
-	//TODO Haider: link this to current animation instead
 	public bool IsAttacking() {
-		return isAttacking;
+		return attacked;
 	}
 }
