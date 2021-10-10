@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 	public float stunned;
 
 	private int playerID;
-	private static int players = 1;
+	public static int players = 1;
 	float root2 = 1f / Mathf.Sqrt(2f);
 
     // Start is called before the first frame update

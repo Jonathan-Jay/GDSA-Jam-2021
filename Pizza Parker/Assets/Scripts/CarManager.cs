@@ -57,6 +57,7 @@ public class CarManager : MonoBehaviour
 			if (winCounter <= 0f) {
 				winCounter = 0f;
 				target = null;
+				Player.players = 1;
 
 				sceneController.OnGameEnded();
 			}
