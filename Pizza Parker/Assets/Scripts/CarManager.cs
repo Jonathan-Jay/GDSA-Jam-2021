@@ -11,7 +11,7 @@ public class CarManager : MonoBehaviour
 
 	public Drunk drunkScript;
 	public bool drunkMode = false;
-	private List<Cars> carsAlive;
+	private List<Cars> carsAlive = new List<Cars>();
 	public Vector2 lowerBound = Vector2.one * -10f;
 	public Vector2 upperBound = Vector2.one * 10f;
 
@@ -23,6 +23,9 @@ public class CarManager : MonoBehaviour
     }
 
     public List<SpawnPoint> spawnPoints;
+	static float winCounter = 0;
+	static Vector3 endPos = Vector3.up * 10f;
+    static Transform target = null;
 
     void Start()
 	{
@@ -46,6 +49,18 @@ public class CarManager : MonoBehaviour
 			drunkScript.enabled = drunkMode;
 		}
 
+		if (winCounter > 0f) {
+			Camera.main.transform.LookAt(target);
+
+			winCounter -= Time.deltaTime;
+			if (winCounter <= 0f) {
+				winCounter = 0f;
+				target = null;
+
+				//TODO John: change scene here
+			}
+		}
+
         //randomized counter system
         countdown -= Time.deltaTime;
         if (countdown < 0)
@@ -53,20 +68,36 @@ public class CarManager : MonoBehaviour
             countdown = Random.Range(minCountdown, maxCountdown);
             //spawn system
             int index = Random.Range(0, spawnPoints.Count);
-            carsAlive.Add(Instantiate(carPrefab, spawnPoints[index].position.position, Quaternion.identity).GetComponent<Cars>());
+            carsAlive.Add(Instantiate(carPrefab,
+				spawnPoints[index].position.position,
+				spawnPoints[index].position.rotation
+			).GetComponent<Cars>());
+
 			carsAlive[carsAlive.Count - 1].dir = spawnPoints[index].direction;
         }
 
 		//bound check
-		foreach (Cars car in carsAlive) {
+		for (int i = 0; i < carsAlive.Count;) {
+			Cars car = carsAlive[i];
 			if (car.transform.position.x < lowerBound.x ||
 				car.transform.position.x > upperBound.x ||
 				car.transform.position.z < lowerBound.y ||
 				car.transform.position.z > upperBound.y)
 			{
-				carsAlive.Remove(car);
-				Destroy(car);
+				carsAlive.RemoveAt(i);
+				Destroy(car.gameObject);
+			}
+			else {
+				++i;
 			}
 		}
     }
+
+	public static void WinThing(GameObject newTarget) {
+		if (winCounter == 0f) {
+			winCounter = 5f;
+			Camera.main.transform.position = endPos;
+			target = newTarget.transform;
+		}
+	}
 }

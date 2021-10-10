@@ -9,5 +9,5 @@ public class Bullet : MonoBehaviour
     {
         Instantiate(bullet, transform.position, transform.rotation);
     }
-
+	
 }

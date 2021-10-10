@@ -42,10 +42,13 @@ public class ProjectileMover : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // TODO JJ: Add player collision < this is player death
+        if (collision.collider.CompareTag("Player")) {
+			CarManager.WinThing(collision.gameObject);
+		}
 
-        // TODO Michael: Add car collision
-		
+		if (collision.collider.CompareTag("Car")) {
+			collision.gameObject.GetComponent<Cars>().StopCar();
+		}
 
         #region Ricochet
         //ricochet
@@ -127,12 +130,6 @@ public class ProjectileMover : MonoBehaviour
 			}
 			#endregion
 		}
-
-        if (collider.CompareTag("Car"))
-        {
-            //TODO: Killing Driver
-
-        }
 		foreach (var detachedPrefab in Detached)
 		{
 			if (detachedPrefab != null)
