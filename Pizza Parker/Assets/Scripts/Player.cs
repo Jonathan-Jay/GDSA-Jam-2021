@@ -111,6 +111,9 @@ public class Player : MonoBehaviour
 				paddle.size = backShape;
 			}
 		}
+		else {
+			anim.SetInteger("State", 3);
+		}
 	}
 
 	public bool IsAttacking() {

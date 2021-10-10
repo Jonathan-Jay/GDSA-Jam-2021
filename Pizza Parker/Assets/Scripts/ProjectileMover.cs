@@ -43,6 +43,7 @@ public class ProjectileMover : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.CompareTag("Player")) {
+			collision.gameObject.GetComponent<Player>().stunned = 3f;
 			CarManager.WinThing(collision.gameObject);
 		}
 

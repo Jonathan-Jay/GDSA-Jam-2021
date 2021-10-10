@@ -7,7 +7,7 @@ using UnityEngine;
 public class Cars : MonoBehaviour
 {
     Rigidbody rb;
-	public Material dead;
+	public Color dead;
 
     public Vector3 dir = Vector3.forward;
     public float speed = 5;
@@ -77,7 +77,7 @@ public class Cars : MonoBehaviour
 		if (!stalled) {
 			stalled = true;
 			rb.velocity = Vector3.zero;
-			GetComponent<MeshRenderer>().material = dead;
+			GetComponentInChildren<SpriteRenderer>().color = dead;
 		}
 	}
 }
