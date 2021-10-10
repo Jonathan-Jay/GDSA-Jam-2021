@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - SceneManagement
+  - Car
   layers:
   - Default
   - TransparentFX
