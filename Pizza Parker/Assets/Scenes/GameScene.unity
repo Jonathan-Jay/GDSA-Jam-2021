@@ -1277,6 +1277,7 @@ MonoBehaviour:
   drunkMode: 0
   lowerBound: {x: -50, y: -25}
   upperBound: {x: 50, y: 25}
+  sceneController: {fileID: 1665732236}
   spawnPoints:
   - position: {fileID: 2054847799}
     direction: {x: 0, y: 0, z: 1}

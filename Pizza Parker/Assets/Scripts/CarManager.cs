@@ -14,6 +14,7 @@ public class CarManager : MonoBehaviour
 	private List<Cars> carsAlive = new List<Cars>();
 	public Vector2 lowerBound = Vector2.one * -10f;
 	public Vector2 upperBound = Vector2.one * 10f;
+	public SceneController sceneController;
 
     [System.Serializable]
     public struct SpawnPoint
@@ -57,7 +58,7 @@ public class CarManager : MonoBehaviour
 				winCounter = 0f;
 				target = null;
 
-				//TODO John: change scene here
+				sceneController.OnGameEnded();
 			}
 		}
 
