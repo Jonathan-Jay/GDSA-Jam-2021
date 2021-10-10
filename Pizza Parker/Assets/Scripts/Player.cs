@@ -9,8 +9,6 @@ public class Player : MonoBehaviour
 	public Transform tempShape;
 	private bool isAttacking = false;
 
-
-
 	BoxCollider paddle;
 	public Vector3 backPos = new Vector3(0f, 0f, 0.6f);
 	public Vector3 backShape = new Vector3(1f, 1f, 0.2f);
@@ -20,6 +18,9 @@ public class Player : MonoBehaviour
 
 	public float speed = 5f;
 	public float stunned;
+
+	public Drunk drunkScript;
+	public bool drunkMode = false;
 
 	private int playerID;
 	private static int players = 1;
@@ -46,10 +47,10 @@ public class Player : MonoBehaviour
 		paddle.center = backPos;
 		paddle.size = backShape;
 
+		drunkScript = Camera.main.gameObject.GetComponent<Drunk>();
 
 
 
-		
 		tempShape.localPosition = backPos;
 		tempShape.localScale = backShape;
     }
@@ -107,7 +108,20 @@ public class Player : MonoBehaviour
 				paddle.size = backShape;
 			}
 		}
-    }
+
+		if (Input.GetButtonDown("Cancel")) 
+		{
+			if (drunkMode)
+			{
+				drunkMode = false;
+			}
+			else 
+			{
+				drunkMode = true;
+			}
+			drunkScript.enabled = drunkMode;
+		}
+	}
 
 	//TODO Haider: link this to current animation instead
 	public bool IsAttacking() {

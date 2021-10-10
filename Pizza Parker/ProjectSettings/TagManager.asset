@@ -7,6 +7,7 @@ TagManager:
   - Wall
   - SceneManagement
   - Car
+  - Post Processing
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - Water
   - UI
   - Player
-  - 
+  - Post Processing
   - 
   - 
   - 
