@@ -67,9 +67,8 @@ public class Player : MonoBehaviour
 		//don't move if too slow, this fixes sliding
 		if (direction.magnitude > 0.25f) {
 			//set rotation and movement
-			rb.rotation = Quaternion.AngleAxis(
-				270f - Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg,
-				Vector3.up);
+			rb.rotation = Quaternion.Euler(90f, 0f,
+				270f + Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg);
 
 			//don't move if stunned, but allow rotation i guess
 			if (stunned > 0) {
