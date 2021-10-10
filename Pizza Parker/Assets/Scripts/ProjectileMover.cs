@@ -127,6 +127,12 @@ public class ProjectileMover : MonoBehaviour
 			}
 			#endregion
 		}
+
+        if (collider.CompareTag("Car"))
+        {
+            //TODO: Killing Driver
+
+        }
 		foreach (var detachedPrefab in Detached)
 		{
 			if (detachedPrefab != null)
