@@ -42,7 +42,7 @@ public class ProjectileMover : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // TODO JJ: Add player collision 
+        // TODO JJ: Add player collision < this is player death
 
         // TODO Michael: Add car collision 
 
@@ -85,4 +85,53 @@ public class ProjectileMover : MonoBehaviour
         }
         #endregion
     }
+
+	void OnTriggerEnter(Collider collider)
+	{
+		if (collider.CompareTag("Player")) {
+			#region hit
+			Quaternion rot;
+			Vector3 pos;
+			if (collider.gameObject.GetComponent<Player>().IsAttacking()) {
+				//hit direction code
+				transform.rotation = Quaternion.AngleAxis(180f, Vector3.up) * collider.transform.rotation;
+
+				//sparks, same code as before, but adapted for this type of hit
+				rot = transform.rotation;
+				pos = transform.position - collider.transform.forward * hitOffset;
+			}
+			else {
+				//bounce on back code
+				Vector3 ricochetDir = Vector3.Reflect(transform.forward, collider.transform.forward);
+				float newRot = 90 - Mathf.Atan2(ricochetDir.z, ricochetDir.x) * Mathf.Rad2Deg;
+				transform.rotation = Quaternion.AngleAxis(newRot, Vector3.up);
+
+				//sparks, same code as before, but adapted for this type of hit
+				rot = transform.rotation;	//collider transform is the normal
+				pos = transform.position + collider.transform.forward * hitOffset;
+			}
+
+			var hitInstance = Instantiate(hit, pos, rot);
+			hitInstance.transform.rotation = transform.rotation * Quaternion.Euler(0, 180f, 0);
+
+			var hitPs = hitInstance.GetComponent<ParticleSystem>();
+			if (hitPs != null)
+			{
+				Destroy(hitInstance, 1);
+			}
+			else
+			{
+				var hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
+				Destroy(hitInstance, 1);
+			}
+		}
+		foreach (var detachedPrefab in Detached)
+		{
+			if (detachedPrefab != null)
+			{
+				detachedPrefab.transform.parent = null;
+			}
+		}
+		#endregion
+	}
 }

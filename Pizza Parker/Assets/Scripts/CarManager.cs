@@ -13,7 +13,7 @@ public class CarManager : MonoBehaviour
     public struct SpawnPoint
     {
         public Transform position;
-        public Vector2 direction;
+        public Vector3 direction;
     }
 
     public List<SpawnPoint> spawnPoints;
