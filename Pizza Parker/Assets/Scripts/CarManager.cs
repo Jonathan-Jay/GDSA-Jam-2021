@@ -58,6 +58,10 @@ public class CarManager : MonoBehaviour
 				winCounter = 0f;
 				target = null;
 				Player.players = 1;
+				while (carsAlive.Count > 0) {
+					Destroy(carsAlive[0].gameObject);
+					carsAlive.RemoveAt(0);
+				}
 
 				sceneController.OnGameEnded();
 			}

@@ -66,20 +66,29 @@ public class Player : MonoBehaviour
 			Input.GetAxisRaw("Vertical " + playerID)
 		);
 
+		if (stunned > 0) {
+			anim.SetInteger("State", 3);
+			stunned -= Time.deltaTime;
+			if (attacked) {
+				attacked = false;
+
+				tempShape.localPosition = backPos;
+				tempShape.localScale = backShape;
+				paddle.center = backPos;
+				paddle.size = backShape;
+			}
+		}
+
 		if (anim.GetInteger("State") != 2) {
 			//don't move if too slow, this fixes sliding
 			if (direction.magnitude > 0.25f) {
-				anim.SetInteger("State", 1);
-
 				//set rotation and movement
 				rb.rotation = Quaternion.AngleAxis(90f - Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg,
 					Vector3.up);
 
-				//don't move if stunned, but allow rotation i guess
-				if (stunned > 0) {
-					stunned -= Time.deltaTime;
-				}	//dont move if attacking
-				else {
+				//only move if not stunned, but allow rotation i guess
+				if (stunned <= 0) {
+					anim.SetInteger("State", 1);
 					//normalize stuff
 					if (Mathf.Abs(direction.x) > 0.5f && Mathf.Abs(direction.z) > 0.5f) {
 						direction *= root2;
@@ -87,7 +96,7 @@ public class Player : MonoBehaviour
 					rb.velocity = direction * speed;
 				}
 			}
-			else {
+			else if (stunned <= 0) {
 				anim.SetInteger("State", 0);
 				rb.velocity = Vector3.zero;
 			}
@@ -117,9 +126,6 @@ public class Player : MonoBehaviour
 				paddle.center = backPos;
 				paddle.size = backShape;
 			}
-		}
-		else {
-			anim.SetInteger("State", 3);
 		}
 	}
 
